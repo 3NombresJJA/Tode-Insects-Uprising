@@ -1,9 +1,9 @@
 export const GAME_CONFIG = {
   ROOMS: { TOTAL: 3, WAVES_PER_ROOM: 3 },
   WAVES: {
-    1: { count: 1, pattern: 'chase', spawnType: 'progressive', batchSize: 2, intervalMs: 1200 },
-    2: { count: 1, pattern: 'linear', spawnType: 'batch', batchSize: 5, intervalMs: 2000 },
-    3: { count: 1, pattern: 'random', spawnType: 'batch', batchSize: 8, intervalMs: 2500 },
+    1: { count: 10, pattern: 'chase', spawnType: 'progressive', batchSize: 2, intervalMs: 1200 },
+    2: { count: 15, pattern: 'linear', spawnType: 'batch', batchSize: 5, intervalMs: 2000 },
+    3: { count: 25, pattern: 'random', spawnType: 'batch', batchSize: 8, intervalMs: 2500 },
   },
   SCALING: {
     ROOM_SPEED_MULTIPLIERS: [1, 1.25, 1.5],
