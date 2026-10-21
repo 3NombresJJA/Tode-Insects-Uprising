@@ -355,6 +355,14 @@ npm run preview
 
 This helps distinguish production asset-path issues from Electron packaging issues.
 
+## Credits and Third-Party Assets
+
+This project uses third-party 3D models, sound effects, textures,
+music, and AI-generated media.
+
+See [CREDITS.md](./CREDITS.md) for asset sources, creator
+attributions, and applicable license information.
+
 ## Licence
 
 The course project this game is built on is distributed under the MIT License; see LICENSE (Copyright (c) 2025 JetBrains Academy). The third-party models keep their own licences, listed in Credits.
