@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/tode.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#102c30" />
+  <meta name="description" content="Tode: Insect Uprising. Crushing the bug rebellion to take back absolute control of the garden." />
+  <link rel="stylesheet" href="/src/style.css" />
+  <title>TODE — Insect Uprising</title>
+</head>
+<body>
+<main class="app-shell">
+  <canvas class="game" aria-label="Tode 3D garden game"></canvas>
+  <div class="world-vignette" aria-hidden="true"></div>
+
+  <section id="boot-screen" class="boot-screen" aria-live="polite">
+    <div class="boot-mark">✦</div>
+    <div class="boot-title">PREPARING THE REBELLION</div>
+    <div class="boot-track"><span></span></div>
+    <p class="boot-copy">Loading Tode, garden grounds, and rebellious swarm...</p>
+  </section>
+
+  <header class="game-hud" aria-label="Estado de la partida">
+    <div class="brand-lockup">
+      <div class="brand-mark"><img src="/tode.svg" alt="Logo de Tode" class="brand-logo-img" /></div>
+      <div>
+        <div class="brand-name">TODE<span>.</span></div>
+        <div class="brand-subtitle">INSECT UPRISING</div>
+      </div>
+    </div>
+    <div class="hud-stats">
+      <div class="stat-card score-card score" aria-label="Current score">
+        <span class="stat-label">SCORE</span>
+        <strong id="score-value" class="stat-number">0000</strong>
+        <span id="score-penalty-anchor" class="score-penalty-anchor" aria-hidden="true"></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">TIME</span>
+        <strong id="timer-value" class="stat-number">00:00</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">KILLS</span>
+        <strong id="kills-value" class="stat-number">00</strong>
+      </div>
+      <div class="stat-card best-card">
+        <span class="stat-label">BEST</span>
+        <strong id="best-value" class="stat-number">0000</strong>
+      </div>
+    </div>
+    <button id="pause-button" class="icon-button pause-button" type="button" aria-label="Pausar juego" title="Pausar (P)">Ⅱ</button>
+  </header>
+
+  <div id="health-widget" class="health-widget" aria-label="Vidas del jugador">
+    <div class="heart" data-index="0"></div>
+    <div class="heart" data-index="1"></div>
+    <div class="heart" data-index="2"></div>
+    <div class="heart is-hidden" data-index="3"></div>
+    <div class="heart is-hidden" data-index="4"></div>
+  </div>
+
+  <div class="room-wave-widget" aria-live="polite" aria-label="Progreso de habitaciones y oleadas">
+    <strong id="room-value">Room: 1 / 3</strong>
+    <strong id="wave-value">Wave: 1 / 3</strong>
+    <span id="wave-enemy-count">Enemies: 0 / 10</span>
+    <div class="wave-progress-track" aria-hidden="true"><span id="wave-progress-fill"></span></div>
+  </div>
+
+  <div id="boss-widget" class="boss-widget is-hidden" aria-live="polite" aria-label="Salud del jefe">
+    <div class="boss-meta"><span>REBEL LEADER</span><strong id="boss-health-label">6 / 6</strong></div>
+    <div class="meter-track boss-track"><span id="boss-health-fill"></span></div>
+  </div>
+
+  <div class="ability-widget tongue-widget" style="bottom: 185px;" aria-live="polite">
+    <div class="ability-icon" style="color: #ffea00; border-color: rgba(255, 234, 0, 0.4); text-shadow: 0 0 14px rgba(255, 234, 0, 0.8);">★</div>
+    <div class="ability-body">
+      <div class="ability-meta"><span>GREAT LICK</span><strong id="tongue-state" class="is-ready">READY</strong></div>
+      <div class="meter-track ability-track"><span id="tongue-fill" style="width:100%; background: linear-gradient(90deg, #ffea00, #ffc107);"></span></div>
+      <div class="ability-hint"><kbd>ALT</kbd><span> Long-range attack</span></div>
+    </div>
+  </div>
+  <div class="ability-widget">
+    <div class="ability-icon">✺</div>
+    <div class="ability-body">
+      <div class="ability-meta"><span>DEVASTATING CROAK</span><strong id="attack-state" class="is-ready">READY</strong></div>
+      <div class="meter-track ability-track"><span id="attack-fill" style="width:100%"></span></div>
+      <div class="ability-hint"><kbd>SPACE</kbd><span> <b id="seed-count">0</b> empowered charges</span></div>
+    </div>
+  </div>
+  <div id="powerup-status" class="powerup-status is-hidden" aria-live="polite"></div>
+
+  <div id="combo-badge" class="combo-badge" aria-live="polite">COMBO ×2</div>
+  <div id="game-toast" class="game-toast" role="status" aria-live="polite"></div>
+
+  <footer class="controls-hint">
+    <div class="control-instruction"><span class="key-cluster"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></span><span><b>MOVE</b><small>Hop across cells</small></span></div>
+    <div class="control-divider"></div>
+    <div class="control-instruction"><kbd class="key-space">SPACE</kbd><span><b>CROAK</b><small>Repel insects</small></span></div>
+    <div class="control-divider"></div>
+    <div class="control-instruction"><kbd class="key-e">ALT</kbd><span><b>SPECIAL ATTACK</b><small>Great lick</small></span></div>
+    <div class="control-divider"></div>
+    <div class="control-instruction"><kbd class="key-p">P</kbd><span><b>PAUSE</b><small>Take a breath</small></span></div>
+  </footer>
+
+  <div class="mobile-controls" aria-label="Touch controls">
+    <div class="d-pad">
+      <button type="button" data-direction="ArrowUp" aria-label="Mover arriba" class="pad-up">↑</button>
+      <button type="button" data-direction="ArrowLeft" aria-label="Mover izquierda" class="pad-left">←</button>
+      <button type="button" data-direction="ArrowDown" aria-label="Mover abajo" class="pad-down">↓</button>
+      <button type="button" data-direction="ArrowRight" aria-label="Mover derecha" class="pad-right">→</button>
+    </div>
+    <button id="mobile-attack" class="mobile-attack" type="button" aria-label="Activate croak">✺<small>CROAK</small></button>
+  </div>
+
+  <section id="story-screen" class="overlay-screen is-hidden" aria-labelledby="story-title">
+    <div class="screen-card story-card">
+      <div class="hero-emblem" aria-hidden="true"><div class="emblem-orbit orbit-one"></div><div class="emblem-orbit orbit-two"></div><div class="emblem-glow"></div><img src="/tode.svg" alt="" class="hero-emblem-svg" /></div>
+      <h1 id="story-title">The Uprising of the Insects</h1>
+      <p class="screen-description">Tode was a happy frog who ruled over his peaceful garden, devouring insects to his heart's content to satisfy his insatiable appetite. However, fed up with being the gluttonous tyrant's daily feast, the bug community united in a fierce retaliation. Armed to the stingers and determined to reclaim the lawn, the swarm launched a massive uprising to overthrow their long-time predator. Now, amidst the chaos, Tode must leap into battle, hone his tongue, and crush the rebellion to take back absolute control of his home.</p>
+      <div class="story-actions">
+        <button id="story-next-button" class="primary-button" type="button"><span>Next</span><b>→</b></button>
+        <label class="music-control" for="music-volume-slider"><span>Music</span><input type="range" id="music-volume-slider" min="0" max="1" step="0.05" value="0.5" /></label>
+      </div>
+    </div>
+  </section>
+
+  <section id="start-screen" class="overlay-screen is-hidden" aria-labelledby="start-title">
+    <div class="screen-card start-card">
+      <div class="eyebrow"><span class="eyebrow-star">✦</span> ARCADE SURVIVAL · 3D ADVENTURE</div>
+      <div class="hero-emblem" aria-hidden="true"><div class="emblem-orbit orbit-one"></div><div class="emblem-orbit orbit-two"></div><div class="emblem-glow"></div><img src="/tode.svg" alt="" class="hero-emblem-svg" /><i>✦</i></div>
+      <h1 id="start-title">Crush the<br /><em>rebellion.</em></h1>
+      <p class="screen-description">The swarm has risen against you. Survive the waves, master the devastating croak, and reclaim your domain over the garden.</p>
+      <div class="feature-row">
+        <div class="feature-chip"><span>✺</span><div><b>CROAK</b><small>Crush the rebels</small></div></div>
+        <div class="feature-chip"><span>✧</span><div><b>BUFFS</b><small>Empower your attack</small></div></div>
+        <div class="feature-chip"><span>↗</span><div><b>REBELLION</b><small>Increasingly intense</small></div></div>
+      </div>
+      <button id="start-button" class="primary-button" type="button"><span>RECLAIM THE GARDEN</span><span class="start-button-hint"><kbd>SPACE</kbd><b>→</b></span></button>
+      <div class="start-footnote"><span class="tiny-dot"></span> Sync your jumps. Don't let the swarm overtake you.</div>
+    </div>
+    <div class="screen-decoration deco-left">✦</div><div class="screen-decoration deco-right">✧</div>
+  </section>
+
+  <section id="pause-screen" class="overlay-screen is-hidden" aria-labelledby="pause-title">
+    <div class="screen-card compact-card">
+      <div class="eyebrow">TACTICAL BREATH</div>
+      <div class="pause-orb">Ⅱ</div>
+      <h2 id="pause-title">Pause, Tode.</h2>
+      <p class="screen-description">Time has stopped. Plan your next leap and prepare to face the swarm when ready.</p>
+      <button id="resume-button" class="primary-button" type="button"><span>RESUME</span><b>→</b></button>
+      <button id="pause-restart-button" class="text-button" type="button">Start a new round</button>
+    </div>
+  </section>
+
+  <section id="powerup-select-screen" class="overlay-screen is-hidden" aria-labelledby="powerup-title">
+    <div class="screen-card powerup-card">
+      <div class="eyebrow"><span class="eyebrow-star">✦</span> GARDEN DOMINANCE</div>
+      <h2 id="powerup-title">The garden bless you to combat!</h2>
+      <p id="powerup-subtitle" class="screen-description">Choose an upgrade to continue your counter-attack.</p>
+      <p id="powerup-reward" class="powerup-reward is-hidden">You can choose 2 Power-Ups, or choose just 1 and unlock the Light Seed Magnet.</p>
+      <div id="powerup-options" class="powerup-options"></div>
+      <button id="powerup-confirm" class="primary-button" type="button"><span id="powerup-confirm-label">CONFIRM AND CONTINUE</span><b>→</b></button>
+      <div class="start-footnote"><kbd>1</kbd> / <kbd>2</kbd> to select</div>
+    </div>
+  </section>
+
+  <div id="gameover-screen" class="overlay-screen game-over is-hidden" aria-labelledby="gameover-title">
+    <div class="screen-card result-card">
+      <div class="eyebrow"><span class="eyebrow-star">✦</span> REBELLION TRIUMPHED</div>
+      <div class="result-spark">✺</div>
+      <h2 id="gameover-title">The swarm<br /><em>overtook you!</em></h2>
+      <p id="record-message" class="record-message">The garden needs its king back for another round</p>
+      <div class="result-score"><span>FINAL SCORE</span><strong id="final-score">0000</strong></div>
+      <div class="result-grid">
+        <div><span>REBELS CRUSHED</span><strong id="final-kills">00</strong></div>
+        <div><span>SURVIVAL</span><strong id="final-time">00:00</strong></div>
+        <div><span>BEST</span><strong id="final-best">0000</strong></div>
+      </div>
+      <button id="retry-button" class="primary-button" type="button"><span>TRY AGAIN</span><b>↻</b></button>
+      <div class="start-footnote"><kbd>SPACE</kbd> also restarts the round</div>
+    </div>
+  </div>
+
+  <div id="victory-fade-overlay" class="victory-fade-overlay is-hidden" aria-hidden="true"></div>
+  <section id="win-stats-screen" class="overlay-screen is-hidden" aria-labelledby="win-stats-title">
+    <div class="screen-card result-card win-stats-card">
+      <div class="eyebrow"><span class="eyebrow-star">✦</span> GARDEN CONQUEROR</div>
+      <div class="result-spark" aria-hidden="true">✧</div>
+      <h2 id="win-stats-title">Rebellion<br /><em>crushed!</em></h2>
+      <p class="screen-description">Absolute control has been restored to the garden. Here's a summary of your campaign.</p>
+      <div class="result-score"><span>SCORE</span><strong id="win-total-score">0000</strong></div>
+      <div class="result-grid win-stats-grid">
+        <div><span>REBELS CRUSHED</span><strong id="win-kills">00</strong></div>
+        <div><span>TIME</span><strong id="win-time">00:00</strong></div>
+      </div>
+      <button id="go-to-credits-button" class="primary-button" type="button"><span>Go to credits</span><b>→</b></button>
+    </div>
+  </section>
+
+  <section id="win-video-screen" class="win-video-screen is-hidden" aria-label="Ending video">
+    <video id="win-ending-video" src="/audios/final.mp4" playsinline preload="auto"></video>
+  </section>
+
+  <section id="win-final-screen" class="overlay-screen is-hidden" aria-labelledby="win-final-title">
+    <div class="screen-card win-final-card">
+      <div class="win-final-logo-wrap"><img src="/tode.svg" alt="Logo de Tode" class="win-final-logo" /></div>
+      <h2 id="win-final-title">Absolute control restored.</h2>
+      <p class="screen-description">Thank you for playing and helping Tode reclaim his kingdom.</p>
+      <button id="play-again-button" class="primary-button win-play-again" type="button"><span>Play again</span><b>↻</b></button>
+      <p class="win-credits">Made for fun & learning</p>
+    </div>
+  </section>
+</main>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
