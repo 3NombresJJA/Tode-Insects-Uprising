@@ -793,7 +793,7 @@ function cleanGameState() {
   enemySpawnSequence = 0;
   comboCount = 0;
   comboWindow = 0;
-  applyGardenTheme(3);
+  applyGardenTheme(1);
   player.reset();
   player.model.visible = true;
   player.setEnabled(false);
