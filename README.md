@@ -355,6 +355,6 @@ npm run preview
 
 This helps distinguish production asset-path issues from Electron packaging issues.
 
-## License
+## Licence
 
-Check the repository's license information before redistributing or modifying the project. Ensure that any third-party models, textures, audio files, and other assets are used in accordance with their respective licenses.
+The course project this game is built on is distributed under the MIT License; see LICENSE (Copyright (c) 2025 JetBrains Academy). The third-party models keep their own licences, listed in Credits.
