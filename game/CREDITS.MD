@@ -1,6 +1,7 @@
 # Credits & Third-Party Asset Licenses
 
-**Project:** TODE — Insect Uprising  
+**Project:** TODE — Insect Uprising
+**Authors:** Alison Daniela Ruiz Muñoz & Juan Jose Angel Duran Calvache
 **Purpose:** JetBrains Game Development Competition  
 **Asset attribution and acknowledgements**
 
