@@ -1,5 +1,6 @@
 # TODE — Insect Uprising
 Made by: Alison Daniela Ruiz Muñoz & Juan Jose Angel Duran Calvache
+
 A 3D insect-themed game built with **JavaScript, Three.js, and Vite**, with a Windows desktop version packaged using **Electron** and **electron-builder**.
 
 This repository contains the game's source code, assets, development environment, and configuration for building a standalone Windows executable.
